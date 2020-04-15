@@ -1,0 +1,131 @@
+{% load bootstrap4 %}
+{% load svg %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% bootstrap_css %}
+
+    <style>
+        html {
+            box-sizing: border-box;
+            line-height: 1.15;
+        }
+
+        body {
+            margin: 0;
+        }
+
+
+        .page {
+            width: 1356px;
+            max-width: 80%;
+            margin: 64px auto;
+        }
+
+        .grid {
+            margin-top: 64px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .gridItem {
+            position: relative;
+            min-width: 22%;
+            border: 1px solid #efefef;
+            border-radius: 4px;
+            margin-bottom: 48px;
+            background-color: #fdfdfd;
+        }
+
+        .gridItem__media {
+            width: 214px;
+            height: 110px;
+            margin: 32px auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .gridItem svg {
+            width: 214px;
+            height: 110px;
+            margin: 32px auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .gridItem__title {
+            margin: 0 8px 16px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="navbar navbar-dark bg-dark shadow-sm">
+            <div class="container d-flex justify-content-between">
+                <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2"
+                        viewBox="0 0 24 24" focusable="false">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+                        </path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <strong>Визуальная библиотека</strong>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="page">
+        <div>
+            <input type="color" id="colorPicker" name="colorPicker" value="#cb4698">
+            <label for="colorPicker">Выбери свой цвет</label>
+        </div>
+        <div class="grid" style="min-height: 100%;">
+            {% for image in images %}
+            <div class="gridItem">
+                <div><a href="{% url 'library:detail' image.id %}">{% svg image.filename %}</a></div>
+                <div class="gridItem__title">{{ image.title }}</div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+    <script>
+        var colorPicker;
+        var currentColor = '#CB4698'
+        var defaultColor = "#CB4698";
+        window.addEventListener("load", startup, false);
+
+        function startup() {
+            colorPicker = document.querySelector("#colorPicker");
+            colorPicker.value = defaultColor;
+            colorPicker.addEventListener("change", updateAll, false);
+            colorPicker.select();
+        }
+
+        function updateAll(event) {
+            document.querySelectorAll(".gridItem").forEach(function (el) {
+                el.innerHTML = el.innerHTML.replace(
+                    new RegExp(currentColor, 'g'), event.target.value);
+            });
+            currentColor = event.target.value;
+        }
+    </script>
+</body>
+
+</html>

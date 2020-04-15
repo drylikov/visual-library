@@ -1,0 +1,221 @@
+{% load bootstrap4 %}
+{% load svg %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% bootstrap_css %}
+
+    <style>
+        html {
+            box-sizing: border-box;
+            line-height: 1.15;
+        }
+
+        body {
+            margin: 0;
+        }
+
+
+        .page {
+            width: 1356px;
+            max-width: 80%;
+            margin: 64px auto;
+        }
+
+        .grid {
+            margin-top: 64px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .gridItem {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border: 1px solid #efefef;
+            border-radius: 4px;
+            margin-bottom: 48px;
+            background-color: #fdfdfd;
+        }
+
+        .gridItem__media {
+            width: 100%;
+            height: 10%;
+            margin: 32px auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .gridItem svg {
+            width: 100%;
+            height: 100%;
+            margin: 32px auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .gridItem__title {
+            margin: 0 8px 16px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .close {
+            position: absolute;
+            right: 32px;
+            top: 80px;
+            width: 32px;
+            height: 32px;
+            opacity: 0.3;
+        }
+
+        .close:hover {
+            opacity: 1;
+        }
+
+        .close:before,
+        .close:after {
+            position: absolute;
+            left: 15px;
+            content: ' ';
+            height: 33px;
+            width: 2px;
+            background-color: #333;
+        }
+
+        .close:before {
+            transform: rotate(45deg);
+        }
+
+        .close:after {
+            transform: rotate(-45deg);
+        }
+
+        .buttons {
+            margin-top: 12px;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="navbar navbar-dark bg-dark shadow-sm">
+            <div class="container d-flex justify-content-between">
+                <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2"
+                        viewBox="0 0 24 24" focusable="false">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+                        </path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <strong>Визуальная библиотека</strong>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="page">
+        <div class="row">
+            <div>
+                <a href="{% url 'library:index' %}">
+                    <span class="close"></span>
+                </a>
+            </div>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <input type="color" id="colorPicker" name="colorPicker" value="#CB4698">
+            <label for="colorPicker" style="margin-left: 10px;">Выбери свой цвет</label>
+        </div>
+        <div class="row image-detail">
+            <div class="col-8 media">
+                <div class="gridItem">
+                    <div id="svg-image">{% svg image.filename %}</div>
+                </div>
+            </div>
+            <div class="col-4 contecnt">
+                <div class="image-header">
+                    <h2>{{image.title}}</h2>
+                </div>
+                <div class="image-description">{{image.description}}</div>
+                <div class="buttons">
+                    <button type="button" class="btn btn-success" onclick="downloadPng()">Скачать
+                        PNG</a>
+                        <button type="button" class="btn btn-warning" onclick="downloadSvg()">
+                            Скачать SVG
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var colorPicker;
+        var currentColor = '#CB4698'
+        var defaultColor = "#CB4698";
+        window.addEventListener("load", startup, false);
+
+        function startup() {
+            colorPicker = document.querySelector("#colorPicker");
+            colorPicker.value = defaultColor;
+            colorPicker.addEventListener("change", updateAll, false);
+            colorPicker.select();
+        }
+
+        function updateAll(event) {
+            document.querySelectorAll(".gridItem").forEach(function (el) {
+                el.innerHTML = el.innerHTML.replace(
+                    new RegExp(currentColor, 'g'), event.target.value);
+            });
+            currentColor = event.target.value;
+        }
+
+        function svgDataURL(svg) {
+            var svgAsXML = (new XMLSerializer).serializeToString(svg);
+            return "data:image/svg+xml," + encodeURIComponent(svgAsXML);
+        }
+
+        function downloadSvg() {
+            var svgImage = document.getElementById("svg-image");
+            var inlineSvg = svgImage.getElementsByTagName('svg')[0];
+            var dl = document.createElement("a");
+            document.body.appendChild(dl);
+            dl.setAttribute("href", svgDataURL(inlineSvg));
+            dl.setAttribute("download", "{{ image.filename }}.svg");
+            dl.click();
+            document.body.removeChild(dl);
+            delete dl;
+        }
+
+        function downloadPng() {
+            var color = currentColor.slice(1);
+            var uri = "{% url 'library:download' image.id '000' %}";
+            var re = /000/gi;
+            uri = uri.replace(re, color);
+            var name = "image.png";
+            var downloadAnchor = document.createElement("a");
+            downloadAnchor.download = name;
+            downloadAnchor.href = uri;
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+            delete downloadAnchor;
+        }
+    </script>
+</body>
+
+</html>
