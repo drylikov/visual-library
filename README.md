@@ -13,12 +13,11 @@
   <img src="documentation/vl-ui-3.png">
 </div>
 
-## Live Demo
-[vl.bayborodin.ru](https://vl.bayborodin.ru)
+
 
 ## License
 
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
 
 - **[MIT license](http://opensource.org/licenses/mit-license.php)**
-- Copyright 2020 © <a href="http://bayborodin.ru" target="_blank">Nikolay Bayborodin</a>.
+- Copyright 2020 © <a href="http://bayborodin.ru" target="_blank">Denis Rylikov</a>.
