@@ -15,7 +15,7 @@ django-bootstrap4==1.1.1
 django-inline-svg==0.1.1
 gunicorn==20.0.4
 pathspec==0.7.0
-Pillow==7.0.0
+Pillow==8.1.1
 psycopg2-binary==2.8.4
 pycparser==2.19
 python-decouple==3.3
